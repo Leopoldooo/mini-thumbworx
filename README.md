@@ -6,7 +6,7 @@ This project was developed as my final project for Cloud Computing Internship.
 
 ---
 
-## 🚀 Features
+## Features
 
 - Add, remove, and manage items
 - Automatic quantity grouping (e.g., 2x banana)
@@ -17,7 +17,7 @@ This project was developed as my final project for Cloud Computing Internship.
 
 ---
 
-## 🧰 Tech Stack
+## Tech Stack
 
 - **Frontend:** HTML, CSS, JavaScript (embedded in Flask)
 - **Backend:** Python Flask
@@ -28,5 +28,3 @@ This project was developed as my final project for Cloud Computing Internship.
 - **Infrastructure as Code (prepared):** Terraform
 
 ---
-
-## 📂 Project Structure
