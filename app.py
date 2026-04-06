@@ -26,7 +26,7 @@ HTML_PAGE = """
         }
 
         .container {
-            max-width: 1050px;
+            max-width: 1180px;
             margin: 40px auto;
             padding: 20px;
         }
@@ -97,7 +97,8 @@ HTML_PAGE = """
             background: #f8fafc;
         }
 
-        .item-input:focus {
+        .item-input:focus,
+        .search-input:focus {
             border-color: #2563eb;
             box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
             background: white;
@@ -131,15 +132,68 @@ HTML_PAGE = """
         .btn-remove {
             background: #dc2626;
             color: white;
-            padding: 12px 18px;
-            font-size: 16px;
+            padding: 12px 16px;
+            font-size: 15px;
+        }
+
+        .btn-plus {
+            background: #16a34a;
+            color: white;
+            padding: 12px 16px;
+            font-size: 15px;
+        }
+
+        .btn-minus {
+            background: #f59e0b;
+            color: white;
+            padding: 12px 16px;
+            font-size: 15px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-top: 24px;
+            align-items: start;
+        }
+
+        .left-panel,
+        .right-panel {
+            min-width: 0;
+        }
+
+        .search-box {
+            background: #f8fafc;
+            border: 1px solid #dbeafe;
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 18px;
+        }
+
+        .search-label {
+            display: block;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #0f172a;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 16px 18px;
+            font-size: 17px;
+            border: 2px solid #cbd5e1;
+            border-radius: 14px;
+            outline: none;
+            background: white;
         }
 
         .item-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 16px;
-            margin-top: 22px;
+            margin-top: 10px;
         }
 
         .item-card {
@@ -180,8 +234,78 @@ HTML_PAGE = """
             font-size: 14px;
         }
 
+        .item-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .summary-box {
+            background: linear-gradient(180deg, #eff6ff, #dbeafe);
+            border: 1px solid #bfdbfe;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.08);
+            position: sticky;
+            top: 20px;
+        }
+
+        .summary-title {
+            margin: 0 0 16px 0;
+            font-size: 24px;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .summary-stat {
+            background: white;
+            border-radius: 18px;
+            padding: 16px;
+            margin-bottom: 14px;
+            border: 1px solid #dbeafe;
+        }
+
+        .summary-stat-label {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 6px;
+        }
+
+        .summary-stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1d4ed8;
+        }
+
+        .summary-list {
+            background: white;
+            border-radius: 18px;
+            padding: 16px;
+            border: 1px solid #dbeafe;
+        }
+
+        .summary-list h3 {
+            margin: 0 0 12px 0;
+            font-size: 18px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 15px;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
         .empty-state {
-            margin-top: 20px;
+            margin-top: 10px;
             padding: 28px;
             text-align: center;
             background: #f8fafc;
@@ -240,6 +364,16 @@ HTML_PAGE = """
             font-size: 15px;
         }
 
+        @media (max-width: 900px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-box {
+                position: static;
+            }
+        }
+
         @media (max-width: 640px) {
             .hero h1 {
                 font-size: 32px;
@@ -251,6 +385,10 @@ HTML_PAGE = """
             }
 
             .input-row {
+                flex-direction: column;
+            }
+
+            .item-actions {
                 flex-direction: column;
             }
         }
@@ -271,7 +409,20 @@ HTML_PAGE = """
                 <button class="btn btn-add" onclick="addItem()">➕ Add Item</button>
             </div>
 
-            <div id="itemsContainer"></div>
+            <div class="dashboard-grid">
+                <div class="left-panel">
+                    <div class="search-box">
+                        <label class="search-label" for="searchInput">🔍 Search Items</label>
+                        <input id="searchInput" class="search-input" type="text" placeholder="Search by item name..." oninput="loadItems()">
+                    </div>
+
+                    <div id="itemsContainer"></div>
+                </div>
+
+                <div class="right-panel">
+                    <div id="summaryContainer"></div>
+                </div>
+            </div>
         </div>
 
         <div class="section">
@@ -301,10 +452,18 @@ async function loadItems() {
     const res = await fetch('/items');
     const items = await res.json();
 
+    const searchValue = document.getElementById('searchInput').value.trim().toLowerCase();
+    const filteredItems = items.filter(item => item.name.toLowerCase().includes(searchValue));
+
+    renderItems(filteredItems);
+    renderSummary(items);
+}
+
+function renderItems(items) {
     const container = document.getElementById('itemsContainer');
 
     if (items.length === 0) {
-        container.innerHTML = '<div class="empty-state">📭 No items added yet.</div>';
+        container.innerHTML = '<div class="empty-state">📭 No matching items found.</div>';
         return;
     }
 
@@ -316,14 +475,60 @@ async function loadItems() {
                     <div class="item-emoji">📦</div>
                     <div class="item-name">${item.name}</div>
                 </div>
-                <div class="item-qty">${item.quantity}x item</div><br>
-                <button class="btn btn-remove" onclick="removeItem(${index})">🗑 Remove</button>
+                <div class="item-qty">${item.quantity}x ${item.name}</div>
+                <div class="item-actions">
+                    <button class="btn btn-plus" onclick="increaseItem('${encodeURIComponent(item.name)}')">➕ Plus</button>
+                    <button class="btn btn-minus" onclick="decreaseItem('${encodeURIComponent(item.name)}')">➖ Minus</button>
+                    <button class="btn btn-remove" onclick="removeItem('${encodeURIComponent(item.name)}')">🗑 Remove</button>
+                </div>
             </div>
         `;
     });
     html += '</div>';
 
     container.innerHTML = html;
+}
+
+function renderSummary(items) {
+    const summaryContainer = document.getElementById('summaryContainer');
+
+    const totalUniqueItems = items.length;
+    const totalItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+
+    let summaryItemsHtml = '';
+    if (items.length === 0) {
+        summaryItemsHtml = '<div class="summary-item"><span>No items yet</span><span>0</span></div>';
+    } else {
+        items.forEach(item => {
+            summaryItemsHtml += `
+                <div class="summary-item">
+                    <span>${item.name}</span>
+                    <strong>${item.quantity}</strong>
+                </div>
+            `;
+        });
+    }
+
+    summaryContainer.innerHTML = `
+        <div class="summary-box">
+            <h3 class="summary-title">📊 Item Summary</h3>
+
+            <div class="summary-stat">
+                <div class="summary-stat-label">Total Unique Items</div>
+                <div class="summary-stat-value">${totalUniqueItems}</div>
+            </div>
+
+            <div class="summary-stat">
+                <div class="summary-stat-label">Total Item Count</div>
+                <div class="summary-stat-value">${totalItemCount}</div>
+            </div>
+
+            <div class="summary-list">
+                <h3>Listed Items</h3>
+                ${summaryItemsHtml}
+            </div>
+        </div>
+    `;
 }
 
 async function addItem() {
@@ -345,9 +550,31 @@ async function addItem() {
     loadItems();
 }
 
-async function removeItem(index) {
-    await fetch('/remove/' + index, {
-        method: 'DELETE'
+async function increaseItem(itemName) {
+    await fetch('/add', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ name: decodeURIComponent(itemName) })
+    });
+
+    loadItems();
+}
+
+async function decreaseItem(itemName) {
+    await fetch('/decrease', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ name: decodeURIComponent(itemName) })
+    });
+
+    loadItems();
+}
+
+async function removeItem(itemName) {
+    await fetch('/remove', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ name: decodeURIComponent(itemName) })
     });
 
     loadItems();
@@ -390,15 +617,32 @@ def add():
 def items():
     return jsonify(data)
 
-@app.route("/remove/<int:index>", methods=["DELETE"])
-def remove(index):
-    if 0 <= index < len(data):
-        if data[index]["quantity"] > 1:
-            data[index]["quantity"] -= 1
-        else:
-            data.pop(index)
-        return jsonify({"message": "Item removed", "items": data})
-    return jsonify({"message": "Invalid item index"}), 404
+@app.route("/decrease", methods=["POST"])
+def decrease():
+    item = request.json
+    item_name = item.get("name", "").strip()
+
+    for existing_item in data:
+        if existing_item["name"].lower() == item_name.lower():
+            if existing_item["quantity"] > 1:
+                existing_item["quantity"] -= 1
+            else:
+                data.remove(existing_item)
+            return jsonify({"message": "Item quantity decreased", "items": data})
+
+    return jsonify({"message": "Item not found"}), 404
+
+@app.route("/remove", methods=["POST"])
+def remove():
+    item = request.json
+    item_name = item.get("name", "").strip()
+
+    for existing_item in data:
+        if existing_item["name"].lower() == item_name.lower():
+            data.remove(existing_item)
+            return jsonify({"message": "Item removed", "items": data})
+
+    return jsonify({"message": "Item not found"}), 404
 
 @app.route("/metrics")
 def metrics():
