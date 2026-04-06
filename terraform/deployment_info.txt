@@ -1,0 +1,7 @@
+Mini Logistics Tracker Deployment
+
+Container: mini-app
+Port: 5000
+Monitoring: Prometheus (9090), Grafana (3000)
+
+This file is generated using Terraform to simulate infrastructure setup.
