@@ -26,30 +26,35 @@ HTML_PAGE = """
         }
 
         .container {
-            max-width: 950px;
+            max-width: 1050px;
             margin: 40px auto;
             padding: 20px;
         }
 
         .hero {
-            background: white;
-            border-radius: 24px;
-            padding: 35px 30px;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+            background: linear-gradient(135deg, #1d4ed8, #2563eb, #38bdf8);
+            color: white;
+            border-radius: 28px;
+            padding: 40px 30px;
+            box-shadow: 0 16px 34px rgba(0, 0, 0, 0.12);
             text-align: center;
             margin-bottom: 24px;
+        }
+
+        .hero-icon {
+            font-size: 54px;
+            margin-bottom: 10px;
         }
 
         .hero h1 {
             margin: 0 0 10px 0;
             font-size: 42px;
-            color: #0f172a;
         }
 
         .hero p {
             margin: 0;
             font-size: 18px;
-            color: #475569;
+            opacity: 0.96;
         }
 
         .section {
@@ -60,10 +65,18 @@ HTML_PAGE = """
             margin-bottom: 24px;
         }
 
-        .section h2 {
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
             margin-top: 0;
+            margin-bottom: 18px;
             font-size: 28px;
             color: #0f172a;
+        }
+
+        .section-icon {
+            font-size: 28px;
         }
 
         .input-row {
@@ -81,11 +94,13 @@ HTML_PAGE = """
             border: 2px solid #cbd5e1;
             border-radius: 16px;
             outline: none;
+            background: #f8fafc;
         }
 
         .item-input:focus {
             border-color: #2563eb;
             box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+            background: white;
         }
 
         .btn {
@@ -96,17 +111,21 @@ HTML_PAGE = """
             font-weight: bold;
             cursor: pointer;
             transition: transform 0.12s ease, opacity 0.12s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .btn:hover {
             transform: translateY(-1px);
-            opacity: 0.95;
+            opacity: 0.96;
         }
 
         .btn-add {
             background: #2563eb;
             color: white;
-            min-width: 130px;
+            min-width: 150px;
         }
 
         .btn-remove {
@@ -118,34 +137,58 @@ HTML_PAGE = """
 
         .item-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 16px;
-            margin-top: 20px;
+            margin-top: 22px;
         }
 
         .item-card {
-            background: #f8fafc;
+            background: linear-gradient(180deg, #f8fafc, #eff6ff);
             border: 1px solid #dbeafe;
-            border-radius: 18px;
+            border-radius: 20px;
             padding: 18px;
             box-shadow: 0 6px 18px rgba(37, 99, 235, 0.08);
         }
 
+        .item-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .item-emoji {
+            font-size: 24px;
+        }
+
         .item-name {
-            font-size: 18px;
+            font-size: 19px;
             font-weight: bold;
-            margin-bottom: 14px;
+            color: #0f172a;
             word-wrap: break-word;
+        }
+
+        .item-qty {
+            display: inline-block;
+            margin-top: 6px;
+            margin-bottom: 14px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-weight: bold;
+            font-size: 14px;
         }
 
         .empty-state {
             margin-top: 20px;
-            padding: 22px;
+            padding: 28px;
             text-align: center;
             background: #f8fafc;
             border-radius: 18px;
             color: #64748b;
             font-size: 17px;
+            border: 1px dashed #cbd5e1;
         }
 
         .about-box, .contact-box {
@@ -166,6 +209,19 @@ HTML_PAGE = """
         .label {
             font-weight: bold;
             color: #0f172a;
+        }
+
+        .contact-line {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .contact-icon {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
         }
 
         a {
@@ -203,34 +259,35 @@ HTML_PAGE = """
 <body>
     <div class="container">
         <div class="hero">
+            <div class="hero-icon">📦</div>
             <h1>Mini Logistics Tracker</h1>
             <p>A simple item tracking system for logistics entries and monitoring.</p>
         </div>
 
         <div class="section">
-            <h2>Add Item</h2>
+            <h2 class="section-title"><span class="section-icon">➕</span> Add Item</h2>
             <div class="input-row">
                 <input id="itemInput" class="item-input" type="text" placeholder="Enter item name">
-                <button class="btn btn-add" onclick="addItem()">Add Item</button>
+                <button class="btn btn-add" onclick="addItem()">➕ Add Item</button>
             </div>
 
             <div id="itemsContainer"></div>
         </div>
 
         <div class="section">
-            <h2>About</h2>
+            <h2 class="section-title"><span class="section-icon">ℹ️</span> About</h2>
             <div class="about-box">
                 <p>This project is my final project for Cloud Computing Internship. It demonstrates a simple logistics tracking web application deployed using Docker, monitored through Prometheus and Grafana, and supported by GitHub Actions.</p>
             </div>
         </div>
 
         <div class="section">
-            <h2>Contacts / Socials</h2>
+            <h2 class="section-title"><span class="section-icon">📱</span> Contacts / Socials</h2>
             <div class="contact-box">
-                <p><span class="label">LinkedIn:</span> <a href="https://www.linkedin.com/in/phol-vidallon/" target="_blank">phol-vidallon</a></p>
-                <p><span class="label">Facebook:</span> Phol Vidallon</p>
-                <p><span class="label">Gmail:</span> pholvidallon@gmail.com</p>
-                <p><span class="label">Mobile Number:</span> 0999-380-9056</p>
+                <p class="contact-line"><span class="contact-icon">💼</span> <span class="label">LinkedIn:</span> <a href="https://www.linkedin.com/in/phol-vidallon/" target="_blank">phol-vidallon</a></p>
+                <p class="contact-line"><span class="contact-icon">📘</span> <span class="label">Facebook:</span> Phol Vidallon</p>
+                <p class="contact-line"><span class="contact-icon">✉️</span> <span class="label">Gmail:</span> pholvidallon@gmail.com</p>
+                <p class="contact-line"><span class="contact-icon">📞</span> <span class="label">Mobile Number:</span> 0999-380-9056</p>
             </div>
         </div>
 
@@ -247,7 +304,7 @@ async function loadItems() {
     const container = document.getElementById('itemsContainer');
 
     if (items.length === 0) {
-        container.innerHTML = '<div class="empty-state">No items added yet.</div>';
+        container.innerHTML = '<div class="empty-state">📭 No items added yet.</div>';
         return;
     }
 
@@ -255,8 +312,12 @@ async function loadItems() {
     items.forEach((item, index) => {
         html += `
             <div class="item-card">
-                <div class="item-name">${item.name}</div>
-                <button class="btn btn-remove" onclick="removeItem(${index})">Remove</button>
+                <div class="item-top">
+                    <div class="item-emoji">📦</div>
+                    <div class="item-name">${item.name}</div>
+                </div>
+                <div class="item-qty">${item.quantity}x item</div><br>
+                <button class="btn btn-remove" onclick="removeItem(${index})">🗑 Remove</button>
             </div>
         `;
     });
@@ -309,7 +370,20 @@ def home():
 @app.route("/add", methods=["POST"])
 def add():
     item = request.json
-    data.append(item)
+    item_name = item.get("name", "").strip()
+
+    if not item_name:
+        return jsonify({"message": "Item name is required"}), 400
+
+    for existing_item in data:
+        if existing_item["name"].lower() == item_name.lower():
+            existing_item["quantity"] += 1
+            return jsonify(data)
+
+    data.append({
+        "name": item_name,
+        "quantity": 1
+    })
     return jsonify(data)
 
 @app.route("/items")
@@ -319,7 +393,10 @@ def items():
 @app.route("/remove/<int:index>", methods=["DELETE"])
 def remove(index):
     if 0 <= index < len(data):
-        data.pop(index)
+        if data[index]["quantity"] > 1:
+            data[index]["quantity"] -= 1
+        else:
+            data.pop(index)
         return jsonify({"message": "Item removed", "items": data})
     return jsonify({"message": "Invalid item index"}), 404
 
